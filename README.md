@@ -1,3 +1,5 @@
+Fork of cheali-charger project with Auto Charging option. After turning on, the charger immediately starts the charging program from Slot#1 if it detects a connected battery. If the battery is missing, it waits for its connection or pressing any button. Hex files are ready for flashing. The mod is based on stawel's hint, https://groups.google.com/g/cheali-charger/c/D3_OvkyY4z8/m/67key5frbOcJ
+
 Welcome to cheali-charger!
 ==========================
 
