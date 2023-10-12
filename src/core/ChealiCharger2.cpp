@@ -17,6 +17,7 @@
 */
 #include "ChealiCharger2.h"
 #include "MainMenu.h"
+#include "Program.h"
 #include "ProgramData.h"
 #include "AnalogInputs.h"
 #include "Utils.h"
@@ -56,6 +57,42 @@ void setup()
     Screen::runWelcomeScreen();
 }
 
+void doMyCharge(uint8_t cells) {
+     //load a specific battery from eeprom
+     ProgramData::loadProgramData(0);
+     
+	 //or (*)
+     //ProgramData::currentProgramData.battery.type = ProgramData::Lipo;
+     //ProgramData::currentProgramData.battery.C = ANALOG_CHARGE(2.200); //Ah
+     //ProgramData::currentProgramData.battery.Ic = ANALOG_AMP(2.2);
+     //ProgramData::currentProgramData.battery.Id = ANALOG_AMP(2.2);
+     //ProgramData::currentProgramData.battery.cells = cells;
+     //ProgramData::currentProgramData.battery.time = 120; //in minutes
+     //end of or (*)
+     
+     //Program::run(Program::FastCharge);
+	 Program::runWithoutInfo(Program::Charge);
+     // you should call Program::runWithoutInfo, see implementation differences
+     // but for the first step this should be enough 
+}
+
+void doMyStuff()
+{
+    uint8_t button;
+    AnalogInputs::powerOn();  //we need to "powerOn" analogInputs to see any voltages
+    do {
+        if(AnalogInputs::isConnected(AnalogInputs::Vout) && AnalogInputs::isOutStable()) {
+             uint8_t cells = AnalogInputs::getConnectedBalancePortCellsCount();
+             doMyCharge(cells);
+             break;
+        }        
+
+        button = Keyboard::getPressedWithDelay();
+    } while (button == BUTTON_NONE);
+
+    AnalogInputs::powerOff();
+}
+
 
 int main()
 {
@@ -64,6 +101,7 @@ int main()
     helperMain();
 #else
     eeprom::check();
+    doMyStuff();  ///<------
     MainMenu::run();
 #endif
 }
